@@ -33,6 +33,91 @@ install.packages("data.table"); install.packages("tidyverse"); install.packages(
 library(data.table); library(ggplot2); library(plyr); library(dplyr); library(reshape2); library(ape); library("coda"); library("lattice")
 ```
 
+## Simulation data and examples of how the functions can be used
+
+Our toy data set will contain six parasites and six hosts, with 15 replicates of each parasite on each host. The response variable, Pterm, is simulated through normal deviations, with each parasite having different means, regardless of host (as we shall see...).
+
+```{r, echo=FALSE}
+library(data.table)
+dat.1 <- data.frame(
+  
+  "Parasite" = rep(paste("P", 1:6, sep = ""), 90),
+  "Hosts" = rep(paste("H", 1:6, sep = ""), 90)
+  
+)
+
+# order the Hosts vector
+dat.1$Hosts <- dat.1$Hosts[order(dat.1$Hosts)]
+# create a blank vector to be filled
+dat.1$Pterm <- vector(length = 540)
+
+## Each Euphrasia has values sampled from a poisson distribution of different means
+dat.1$Pterm[dat.1$Parasite == "P1"] <- rnorm(n = 90, mean = 5, sd = 2)
+dat.1$Pterm[dat.1$Parasite == "P2"] <- rnorm(n = 90, mean = 10, sd = 2)
+dat.1$Pterm[dat.1$Parasite == "P3"] <- rnorm(n = 90, mean = 15, sd = 2)
+dat.1$Pterm[dat.1$Parasite == "P4"] <- rnorm(n = 90, mean = 20, sd = 2)
+dat.1$Pterm[dat.1$Parasite == "P5"] <- rnorm(n = 90, mean = 25, sd = 2)
+dat.1$Pterm[dat.1$Parasite == "P6"] <- rnorm(n = 90, mean = 30, sd = 2)
+
+setDT(dat.1)
+
+```
+
+We can fit models to a very simple dataset about growth of parasites on host species.
+
+```{r, eval=TRUE}
+head(dat.1); tail(dat.1)
+```
+
+Firstly we will do a model in lme4. 
+
+```{r}
+library(lme4)
+
+mod.1 <- lmer(Pterm ~ 1 + (1 | Hosts) + (1 | Parasite), data = dat.1)
+
+summary(mod.1)
+```
+
+So this shows that almost all of the variance in our Pterm is being explained by Parasite, and the rest by the residual. But let's check that further...
+
+```{r}
+library(VCVglmm)
+VarExpl.mer(mod.1)
+```
+
+And if we want that pesky p-value that lme4 doesn't give you in the `summary()`, don't worry.
+
+```{r}
+calc_pvals(mod.1)
+```
+
+And if we quickly translate that to `MCMCglmm()` language...
+
+```{r}
+library(MCMCglmm)
+
+mod.2 <- MCMCglmm(Pterm ~ 1, 
+                  random = ~ Hosts + Parasite,
+                  data = dat.1,
+                  pr = TRUE,
+                  verbose = FALSE)
+
+summary(mod.2)
+```
+
+Looks sensible to me, we might want to add a prior for real data however. Below, using `Solapply()` we can extract the posterior modes of each of the levels of the random effects to see which levels are having the greatest impact.
+
+```{r}
+Solapply(mod.2)
+```
+
+Again we see that 97% of the variability in our data is explained by Parasite.
+
+```{r}
+MCMCRepnorm2(mod = mod.2)
+```
+
 ## Improvements
 
 Please tell me where I've gone wrong and contribute if you can/want to!
