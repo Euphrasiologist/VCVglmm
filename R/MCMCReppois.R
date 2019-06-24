@@ -18,7 +18,7 @@ MCMCReppois<-function(mod, y = "variable"){
   var.a      <- mod$VCV[,y]
   # total variance
   var.e      <- rowSums(mod$VCV)
-  # grand intercept calculation
+  # grand intercept calculation (Thanks Greg Albery!)
   beta0      <- sapply(1:dim(mod$Sol)[1],function(z) mean(as.matrix(mod$X)%*%as.matrix(mod$Sol[z,1:ncol(mod$X)])))
   # repeatability function for poisson distribution & log link
   postR.link <- var.a/(var.e+log(1/exp(beta0)+1))

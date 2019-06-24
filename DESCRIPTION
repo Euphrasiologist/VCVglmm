@@ -1,0 +1,10 @@
+Package: VCVglmm
+Title: Manipulating model outputs from MCMCglmm and lme4 objects, usually involving variance-covariance matrices
+Version: 0.0.0.9000
+Authors@R: person("Max", "Brown", email = "max.brown@ed.ac.uk", role = c("aut", "cre"))
+Description: A bunch of functions that I have found useful in creating and have gotten help from many sources. Useful only really for MCMCglmm model output, which are generalised linear mixed effects models in a bayesian framework, and lme4, the standard (and great!) frequentist solution to mixed models.
+Depends: R (>= 3.5.1); library(data.table); library(ggplot2); library(lattice); library(tidyverse)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
