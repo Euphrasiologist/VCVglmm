@@ -16,7 +16,7 @@ MCMCranef <- function(mod, group = FALSE){
     stop("Object not of class MCMCglmm")
   }
   
-  if(dim(model$Sol)[2] <= model$Fixed$nfl){
+  if(dim(mod$Sol)[2] <= mod$Fixed$nfl){
     stop("Re-run the model with parameter option pr = TRUE")
   } 
   
