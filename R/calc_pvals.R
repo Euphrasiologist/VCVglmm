@@ -17,7 +17,7 @@ calc_pvals <- function(lmermod){
     colnames(dat)[1] <- "Levels"
     
     dat$pval_upperdf <- 1-pt(q = dat$`t value`, df = stats::nobs(lmermod))
-    dat$pval_lowerdf <- 1-pt(q = dat$`t value`, df = summary(lmermod)$ngrps)
+    dat$pval_lowerdf <- 1-pt(q = dat$`t value`, df = sum(summary(lmermod)$ngrps))
     
     return(dat)
   } else stop("Model not of class lmerMod")
