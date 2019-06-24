@@ -112,7 +112,7 @@ Looks sensible to me, we might want to add a prior for real data however. Below,
 Solapply(mod.2)
 ```
 
-Again we see that 97% of the variability in our data is explained by Parasite.
+Again we see that ~96% of the variability in our data is explained by Parasite, which was pretty much 100% in the lmer model.
 
 ```{r}
 MCMCRepnorm2(mod = mod.2)
