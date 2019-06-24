@@ -11,7 +11,7 @@ VarExpl.mer <- function(mod){
     
     if(class(mod)[1] == "glmerMod" | class(mod)[1] == "lmerMod"){
       
-      if(grepl(names(unlist(mod@cnms)), pattern = "Obs")[1] == FALSE){
+      if(class(mod)[1] == "glmerMod" & grepl(names(unlist(mod@cnms)), pattern = "Obs")[1] == FALSE){
         stop("Please fit an observation level random effect, called Obs, as last random effect in model formula")
       }
         
