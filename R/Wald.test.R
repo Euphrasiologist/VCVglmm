@@ -8,7 +8,8 @@
 #' # needs aod
 #' library(aod)
 #' mod <-  MCMCglmm(y ~ x, random = ~ z)
-#' Wald.test(mod = mod, fixed = 3:5)
+#' # if x is a 4 levelled factor
+#' Wald.test(mod = mod, fixed = 2:4)
 
 
 Wald.test <- function(mod, fixed){
