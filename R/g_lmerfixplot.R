@@ -11,7 +11,7 @@
 
 g_lmerfixplot <- function(model, factor = list(...), reorder = FALSE){
   
-  if(class(mod)[1] != "glmerMod" | class(mod)[1] != "lmerMod"){
+  if(class(model)[1] != "glmerMod" | class(model)[1] != "lmerMod"){
     stop("Functionality supported for lme4 models only")
   }
   rsum <-  emmeans(model, factor, adjust = "tukey")[[2]]
