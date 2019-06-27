@@ -1,3 +1,17 @@
+#' Performing Wald tests on MCMCglmm fixed effects automatically
+#' 
+#' @param mod model of class MCMCglmm
+#' @keywords MCMCglmm, fixed effects, p-values, Wald test
+#' @export
+#' @examples
+#' # needs aod
+#' library(aod)
+#' mod <-  MCMCglmm(y ~ x, random = ~ z)
+#' # if x is a 4 levelled factor
+#' Wald.test(mod = mod)
+
+
+
 Wald.test.auto <- function(mod){
   
   if(attributes(mod)$class != "MCMCglmm"){
