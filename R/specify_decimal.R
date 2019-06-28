@@ -1,6 +1,6 @@
 #' Specify the number of decimal places
 #' Please see (https://stackoverflow.com/questions/3443687/formatting-decimal-places-in-r)
-#' for the function conceptions. Note, numbers returned as characters.
+#' for the function conceptions
 #' 
 #' @param x decimal to convert
 #' @param k number of decimal places
