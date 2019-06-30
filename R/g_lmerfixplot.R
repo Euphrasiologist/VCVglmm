@@ -1,7 +1,7 @@
 #' ggplot2 ouptut of Tukey comparisons for lmer models 
 #' 
 #' @param model model of class lmerMod
-#' @param factor list of the form list(pairwise ~ your variable of interest)
+#' @param factor variable that pairwise comparisons made on
 #' @param reorder should the plot be reordered from high to low effect size?
 #' @keywords lme4, fixed effects, plot, tukey
 #' @export
@@ -9,12 +9,14 @@
 #' mod <- lmer(y ~ x + (1 | z))
 #' g_lmerfixplot(mod, list(pairwise ~ x), reorder = TRUE)
 
-g_lmerfixplot <- function(model, factor = list(...), reorder = FALSE){
+g_lmerfixplot <- function(model, factor, reorder = FALSE){
   
   if(class(model)[1] != "glmerMod" | class(model)[1] != "lmerMod"){
     stop("Functionality supported for lme4 models only")
   }
-  rsum <-  emmeans(model, factor, adjust = "tukey")[[2]]
+  
+  rsum <-  emmeans(model, factor)
+  rsum <- pairs(rsum)
   rsum <- as.data.frame(rsum)
   
   rsum$ptext <- rep(NA, dim(rsum)[1])
