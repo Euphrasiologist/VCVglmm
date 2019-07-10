@@ -25,6 +25,13 @@ Wald.test.auto <- function(mod){
   # individual covariates
   covars <- gsub(fixeff2, pattern = " ", replacement = "")
   
+  # if intercept is explicitly present, remove it
+  if(any(covars == "1")){
+    sset <- grep(pattern = "[^1]", covars)
+    covars <- covars[sset]
+  }
+  
+  
   res <- list()
   for(i in 1: length(covars)){
     # grab the numbers of the levels to test
