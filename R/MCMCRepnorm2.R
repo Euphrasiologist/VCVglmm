@@ -1,4 +1,4 @@
-#' Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale
+#' Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale for Gaussian models
 #' 
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, repeatability, ICC, variance explained
