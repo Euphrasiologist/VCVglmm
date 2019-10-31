@@ -3,7 +3,7 @@
 #' @param phylo object of class phylo
 #' @param type at what level calculation should be at, between all species, at the level of genus or any combination within genus
 #' @keywords variance, covariance, tree
-#' @export ape
+#' @export
 #' @examples
 #' # requires ape
 #' library(ape)
