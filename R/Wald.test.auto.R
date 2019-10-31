@@ -25,6 +25,13 @@ Wald.test.auto <- function(mod){
   # individual covariates
   covars <- gsub(fixeff2, pattern = " ", replacement = "")
   
+  # if intercept is explicitly present, remove it
+  if(any(covars == "1")){
+    sset <- grep(pattern = "[^1]", covars)
+    covars <- covars[sset]
+  }
+  
+  
   res <- list()
   for(i in 1: length(covars)){
     # grab the numbers of the levels to test
@@ -35,7 +42,7 @@ Wald.test.auto <- function(mod){
     # means of the posterior for the fixed effects
     coefs <- colMeans(mod$Sol[, fixed, drop = FALSE])
     # how many terms to test
-    Terms <- length(fixed)
+    Terms <- 1:length(fixed)
     # requires library(aod)
     res[[i]] <- aod::wald.test(Sigma = varcov, b = coefs, Terms = Terms)$result
     names(res[[i]]) <- covars[i]
