@@ -2,7 +2,7 @@
 % Please edit documentation in R/MCMCRepnorm2.R
 \name{MCMCRepnorm2}
 \alias{MCMCRepnorm2}
-\title{Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale}
+\title{Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale for Gaussian models}
 \usage{
 MCMCRepnorm2(mod)
 }
@@ -10,7 +10,7 @@ MCMCRepnorm2(mod)
 \item{mod}{model of class MCMCglmm}
 }
 \description{
-Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale
+Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale for Gaussian models
 }
 \examples{
 model <- MCMCglmm(y ~ x, random = ~ z)

@@ -4,12 +4,12 @@
 \alias{g_lmerfixplot}
 \title{ggplot2 ouptut of Tukey comparisons for lmer models}
 \usage{
-g_lmerfixplot(model, factor = list(...), reorder = FALSE)
+g_lmerfixplot(model, factor, reorder = FALSE)
 }
 \arguments{
 \item{model}{model of class lmerMod}
 
-\item{factor}{list of the form list(pairwise ~ your variable of interest)}
+\item{factor}{variable that pairwise comparisons made on}
 
 \item{reorder}{should the plot be reordered from high to low effect size?}
 }
