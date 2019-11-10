@@ -1,4 +1,6 @@
-#' Given a tree, return the average root to tip distance between a random pair of taxa
+#' Given a tree, return the average root to tip distance between a random pair of taxa. For calculating ICC the phylogenetic variance
+#' should always be multiplied by the average root-to-tip branch length if you want the average ICC. If the tree is ultrametric and scaled then the
+#' root-to-tip branch length is one and there is no need.
 #' 
 #' @param phylo object of class phylo
 #' @param type at what level calculation should be at, between all species, at the level of genus or any combination within genus
@@ -23,7 +25,7 @@ Bbar <- function(phylo, type = c("All", "Genus", "Species")){
   if(type == "All"){
     dbar <- mean(diag(varcov))
     obar <- (sum(varcov)-sum(diag(varcov)))/(n^2-n)
-    Bbar <- 2*dbar + 4*obar
+    Bbar <- 2*dbar + 2*obar
     return(Bbar)
   }
   
@@ -39,14 +41,14 @@ Bbar <- function(phylo, type = c("All", "Genus", "Species")){
   }), dimnames = list(names(submats), "obar")))
   
   if(type == "Genus"){
-    BbarG <- (2*sum(B[,"dbar"]) + 2*sum(B[,"obar"]))/dim(B)[1] # TODO are the scalar multipliers correct here?
+    BbarG <- (2*sum(B[,"dbar"]) + 2*sum(B[,"obar"]))/dim(B)[1] 
     return(BbarG)
   }
   if(type == "Species"){
     n <- matrix(sapply(X = submats, FUN = function(x) dim(x)[1]), dimnames = list(names(submats), "n"))
     nc <-  matrix(sapply(X = submats, FUN = function(x) (dim(x)[1]^2-dim(x)[1])/2), dimnames = list(names(submats), "nc"))
     B <- cbind(B, n, nc)
-    BbarS <- (2*sum(B[,"dbar"], B[,"n"]) + 2*sum(B[,"obar"], B[,"nc"]))/sum(B[,"nc"]) # TODO are the scalar multipliers correct here?
+    BbarS <- (2*sum(B[,"dbar"], B[,"n"]) + 2*sum(B[,"obar"], B[,"nc"]))/sum(B[,"nc"]) 
     return(BbarS)
   }
 }
