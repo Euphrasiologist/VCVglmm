@@ -12,7 +12,7 @@ MCMCRepnorm2 <- function(mod){
   if(attributes(mod)$class != "MCMCglmm"){
     stop("Model must be of class MCMCglmm!")
   }
-  # extract variables
+  
   y <- c(all.vars(mod$Random$formula), "units")
   
   var.a <- list()

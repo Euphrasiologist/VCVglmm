@@ -2,6 +2,7 @@
 #' 
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, fixed effects, plot
+#' @import lattice
 #' @export
 #' @examples
 #' mod <- MCMCglmm(y ~ x1 + x2, random =  ~ z)

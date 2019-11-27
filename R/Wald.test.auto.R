@@ -2,6 +2,7 @@
 #' 
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, fixed effects, p-values, Wald test
+#' @import aod wald.test
 #' @export
 #' @examples
 #' # needs aod
@@ -44,7 +45,7 @@ Wald.test.auto <- function(mod){
     # how many terms to test
     Terms <- 1:length(fixed)
     # requires library(aod)
-    res[[i]] <- aod::wald.test(Sigma = varcov, b = coefs, Terms = Terms)$result
+    res[[i]] <- wald.test(Sigma = varcov, b = coefs, Terms = Terms)$result
     names(res[[i]]) <- covars[i]
   }
   

@@ -3,6 +3,8 @@
 #' @param model model of class MCMCglmm
 #' @param FUN function name to apply over object, default is posterior mode, suggested also is coda::HPDinterval
 #' @keywords MCMCglmm, posterior modes
+#' @import coda
+#' @import data.table
 #' @export
 #' @examples
 #' # requires data.table
@@ -38,7 +40,6 @@ Solapply <- function(model, FUN = posterior_mode, ...){
     temp$Group <- gsub("\\..*", "", temp$Variable)
     return(temp)
   }
-  
   
   temp <- setDT(as.data.frame(apply(model$Sol[,-c(1:model$Fixed$nfl)], 2, FUN)), keep.rownames = TRUE)
   colnames(temp) <- c("Variable", "Grouped_Value")

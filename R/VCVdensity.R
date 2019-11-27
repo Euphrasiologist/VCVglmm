@@ -2,6 +2,8 @@
 #'
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, posterior modes
+#' @import ggplot2
+#' @import data.table
 #' @export
 #' @examples
 #' # requires ggplot2
@@ -15,7 +17,7 @@ VCVdensity <- function(mod){
     stop("Object not of class MCMCglmm")
   }
   
-  ref <- data.frame(mod$VCV)
-  rdf <- reshape2::melt(ref)
+  ref <- data.table(mod$VCV)
+  rdf <- suppressWarnings(melt(ref))
   ggplot(rdf, aes(x=value, fill=variable))+geom_density(alpha=0.3)
 }
