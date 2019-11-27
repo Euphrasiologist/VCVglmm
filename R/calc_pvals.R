@@ -2,6 +2,9 @@
 #' 
 #' @param lmermod model of class lmerMod
 #' @keywords lme4, fixed effects, p-values
+#' @importFrom data.table as.data.table
+#' @importFrom stats nobs
+#' @import lme4
 #' @export
 #' @examples
 #' # needs data.table
@@ -23,3 +26,4 @@ calc_pvals <- function(lmermod){
   } else stop("Model not of class lmerMod")
   
 }
+

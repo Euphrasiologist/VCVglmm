@@ -4,7 +4,7 @@
 \alias{MCMCranef}
 \title{Visualise the random effect posterior distributions}
 \usage{
-MCMCranef(mod, group = FALSE)
+MCMCranef(mod, group = FALSE, data = FALSE)
 }
 \arguments{
 \item{mod}{model of class MCMCglmm}

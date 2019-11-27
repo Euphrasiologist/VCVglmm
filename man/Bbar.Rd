@@ -2,7 +2,9 @@
 % Please edit documentation in R/Bbar.R
 \name{Bbar}
 \alias{Bbar}
-\title{Given a tree, return the average root to tip distance between a random pair of taxa}
+\title{Given a tree, return the average root to tip distance between a random pair of taxa. For calculating ICC the phylogenetic variance
+should always be multiplied by the average root-to-tip branch length if you want the average ICC. If the tree is ultrametric and scaled then the
+root-to-tip branch length is one and there is no need.}
 \usage{
 Bbar(phylo, type = c("All", "Genus", "Species"))
 }
@@ -12,7 +14,9 @@ Bbar(phylo, type = c("All", "Genus", "Species"))
 \item{type}{at what level calculation should be at, between all species, at the level of genus or any combination within genus}
 }
 \description{
-Given a tree, return the average root to tip distance between a random pair of taxa
+Given a tree, return the average root to tip distance between a random pair of taxa. For calculating ICC the phylogenetic variance
+should always be multiplied by the average root-to-tip branch length if you want the average ICC. If the tree is ultrametric and scaled then the
+root-to-tip branch length is one and there is no need.
 }
 \examples{
 # requires ape

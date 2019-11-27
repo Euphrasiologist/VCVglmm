@@ -4,6 +4,9 @@
 #' @param factor variable that pairwise comparisons made on
 #' @param reorder should the plot be reordered from high to low effect size?
 #' @keywords lme4, fixed effects, plot, tukey
+#' @import ggplot2
+#' @import emmeans
+#' @import lme4
 #' @export
 #' @examples
 #' mod <- lmer(y ~ x + (1 | z))

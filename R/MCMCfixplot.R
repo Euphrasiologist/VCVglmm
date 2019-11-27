@@ -2,6 +2,7 @@
 #' 
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, fixed effects, plot
+#' @import ggplot2
 #' @export
 #' @examples
 #' # requires ggplot2

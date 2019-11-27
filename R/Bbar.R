@@ -5,6 +5,8 @@
 #' @param phylo object of class phylo
 #' @param type at what level calculation should be at, between all species, at the level of genus or any combination within genus
 #' @keywords variance, covariance, tree
+#' @importFrom ape is.ultrametric
+#' @importFrom ape vcv
 #' @export
 #' @examples
 #' # requires ape
