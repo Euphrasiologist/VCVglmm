@@ -7,8 +7,8 @@
 #' @import ggplot2
 #' @export
 #' @examples
-#' # requires plyr, dplyr,reshape2, ggplot2
-#' library(plyr); library(tidyverse)
+#' # requires data.table, ggplot2
+#' library(data.table); library(ggplot2)
 #' model <- MCMCglmm(y ~ x, random = ~ z)
 #' MCMCranef(model)
 
