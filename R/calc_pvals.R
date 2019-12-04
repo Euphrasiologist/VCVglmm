@@ -6,6 +6,8 @@
 #'
 #' Please see https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html and https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html for detailed information.
 #' 
+#' Personal observations are that the results from this function lie broadly in line with output from MCMCglmm, at least for simple models.
+#' 
 #' @param lmermod model of class lmerMod
 #' @keywords lme4, fixed effects, p-values
 #' @importFrom data.table as.data.table

@@ -15,8 +15,8 @@ MCMCranef(mod, group = FALSE, data = FALSE)
 Visualise the random effect posterior distributions
 }
 \examples{
-# requires plyr, dplyr,reshape2, ggplot2
-library(plyr); library(tidyverse)
+# requires data.table, ggplot2
+library(data.table); library(ggplot2)
 model <- MCMCglmm(y ~ x, random = ~ z)
 MCMCranef(model)
 }

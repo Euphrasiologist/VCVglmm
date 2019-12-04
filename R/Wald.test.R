@@ -3,7 +3,7 @@
 #' @param mod model of class MCMCglmm
 #' @param fixed numeric vector specifying terms to be tested. In summary(mod), in location effects, the intercept is 1. Jointly test a factor by including all levels (minus intercept).
 #' @keywords MCMCglmm, fixed effects, p-values, Wald test
-#' @import aod wald.test
+#' @importFrom aod wald.test
 #' @export
 #' @examples
 #' # needs aod

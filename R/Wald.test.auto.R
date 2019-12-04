@@ -2,7 +2,7 @@
 #' 
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, fixed effects, p-values, Wald test
-#' @import aod wald.test
+#' @importFrom aod wald.test
 #' @export
 #' @examples
 #' # needs aod

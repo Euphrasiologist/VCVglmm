@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_pvals.R
 \name{calc_pvals}
 \alias{calc_pvals}
-\title{Calculating p-values for the annoying lme4 Gaussian mixed model}
+\title{Calculating p-values for the lme4 Gaussian mixed model.}
 \usage{
 calc_pvals(lmermod)
 }
@@ -10,7 +10,14 @@ calc_pvals(lmermod)
 \item{lmermod}{model of class lmerMod}
 }
 \description{
-Calculating p-values for the annoying lme4 Gaussian mixed model
+P-values are not reported for this model type due to difficulties in estimating degrees of freedom in these types of model and the fact that it is not known for sure whether the t-values do indeed follow the t distribution. 
+With that in mind, the following function should be used with caution. If we accept that the t-value will at least approximately follow the t-distribution, then degrees of freedom must lie between the highest order grouping variable
+in the data and the number of observations themselves.
+}
+\details{
+Please see https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html and https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html for detailed information.
+
+Personal observations are that the results from this function lie broadly in line with output from MCMCglmm, at least for simple models.
 }
 \examples{
 # needs data.table
