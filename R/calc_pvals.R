@@ -1,4 +1,10 @@
-#' Calculating p-values for the annoying lme4 Gaussian mixed model
+#' Calculating p-values for the lme4 Gaussian mixed model.
+#' 
+#' P-values are not reported for this model type due to difficulties in estimating degrees of freedom in these types of model and the fact that it is not known for sure whether the t-values do indeed follow the t distribution. 
+#' With that in mind, the following function should be used with caution. If we accept that the t-value will at least approximately follow the t-distribution, then degrees of freedom must lie between the highest order grouping variable
+#' in the data and the number of observations themselves.
+#'
+#' Please see https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html and https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html for detailed information.
 #' 
 #' @param lmermod model of class lmerMod
 #' @keywords lme4, fixed effects, p-values
