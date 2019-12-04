@@ -1,5 +1,6 @@
 Package: VCVglmm
 Title: Manipulating model outputs from MCMCglmm and lme4 objects, usually involving variance-covariance matrices
+Date: 2019-12-4
 Version: 0.1.0
 Authors@R: person("Max", "Brown", email = "max.brown@ed.ac.uk", role = c("aut", "cre"))
 Description: Manipulating model outputs, especially mixed models but also some generic plotting functions and data manipulation.
