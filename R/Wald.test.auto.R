@@ -49,6 +49,40 @@ Wald.test.auto <- function(mod){
     names(res[[i]]) <- covars[i]
   }
   
+  datres <- data.frame(res)
+  class(datres) <- c("MCMCglmmWT", "data.frame")
+  datres
+}
+
+#' @export
+
+print.MCMCglmmWT <- function(x, signif = TRUE){
+  cat("Wald test of the joint effect of fixed covariates:\n\n")
+  tx <- t(x)
+  tx <- as.data.frame(tx)
+  if(!signif){
+    print(tx)
+  } else {
+    asterisks <- function(P) { # thanks https://gist.github.com/ewancarr/6674998
+      if (P <= 0.001) {
+        return("***")
+      }
+      if (P <= 0.01) {
+        return(" **")
+      }		
+      if (P <= 0.05) {
+        return("  *")
+      }
+      else {return("   ")
+      }
+    }
+    
+    stars <- vector()
+    for(i in 1:dim(tx)[1]){
+      stars[i] <- asterisks(tx[i,3])
+    }
+    tx$` ` <- stars
+    print(tx)
+  }
   
-  return(data.frame(res))
 }
