@@ -25,7 +25,7 @@ Wald.test <- function(mod, fixed){
   # means of the posterior for the fixed effects
   coefs <- colMeans(mod$Sol[, fixed, drop = FALSE])
   # how many terms to test
-  Terms <- length(fixed)
+  Terms <- 1:length(fixed)
   # requires library(aod)
   res <- wald.test(Sigma = varcov, b = coefs, Terms = Terms)
   

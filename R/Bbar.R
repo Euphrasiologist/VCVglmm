@@ -11,13 +11,17 @@
 #' @examples
 #' # requires ape
 #' library(ape)
-#' tree <- rtree(100, rooted = TRUE)
+#' tree <- rtree(10, rooted = TRUE, tip.label = c(paste("G1", 1:5, sep = " "),
+#'                                                      paste("G2", 1:5, sep = " ")))
 #' Bbar(tree, type = "Genus")
 
 Bbar <- function(phylo, type = c("All", "Genus", "Species")){
-
+  
   if(class(phylo) != "phylo" || is.ultrametric(phylo)){
     stop("Object must be of class phylo and not ultrametric")
+  }
+  if(!all(grepl("^.* .*", tree$tip.label))){
+    stop("For this function to work, tip labels must be separated by a space between genus and species")
   }
   
   type <- match.arg(type)
@@ -54,4 +58,3 @@ Bbar <- function(phylo, type = c("All", "Genus", "Species")){
     return(BbarS)
   }
 }
-
