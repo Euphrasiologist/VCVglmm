@@ -20,7 +20,7 @@ Bbar <- function(phylo, type = c("All", "Genus", "Species")){
   if(class(phylo) != "phylo" || is.ultrametric(phylo)){
     stop("Object must be of class phylo and not ultrametric")
   }
-  if(!all(grepl("^.* .*", tree$tip.label))){
+  if(!all(grepl("^.* .*", phylo$tip.label))){
     stop("For this function to work, tip labels must be separated by a space between genus and species")
   }
   
