@@ -121,3 +121,7 @@ MCMCRepnorm2(mod = mod.2)
 ## Improvements
 
 Please tell me where I've gone wrong and contribute if you can/want to!
+
+## Citations
+
+- Common et al., 2020 Diversity in CRISPR‐based immunity protects susceptible genotypes by restricting phage spread and evolution, doi: https://doi.org/10.1111/jeb.13638
