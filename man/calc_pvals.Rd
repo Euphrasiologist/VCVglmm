@@ -22,7 +22,8 @@ Personal observations are that the results from this function lie broadly in lin
 \examples{
 # needs data.table
 library(data.table)
-mod <- lmer(y ~ x + (1 | z))
+library(lme4)
+mod <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 calc_pvals(mod)
 }
 \keyword{effects,}

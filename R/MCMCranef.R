@@ -2,15 +2,18 @@
 #'
 #' @param mod model of class MCMCglmm
 #' @param group logical, should the random effects be grouped?
+#' @param data logical, return the data instead of plotting?
 #' @keywords MCMCglmm, posterior modes
 #' @import data.table
 #' @import ggplot2
 #' @export
 #' @examples
+#' \dontrun{
 #' # requires data.table, ggplot2
 #' library(data.table); library(ggplot2)
 #' model <- MCMCglmm(y ~ x, random = ~ z)
 #' MCMCranef(model)
+#' }
 
 MCMCranef <- function(mod, group = FALSE, data = FALSE){
   

@@ -17,8 +17,10 @@ ultm(tree, MPL = FALSE, inverseA = TRUE)
 Convert a phylo object to an inverse distance matrix that MCMCglmm understands
 }
 \examples{
+\dontrun{
 tree <- ape::read.tree("./tree.newick") # newick format
 ultm(tree, MPL = FALSE, inverseA = TRUE)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{ape,}

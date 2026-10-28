@@ -10,14 +10,17 @@ Wald.test.auto(mod)
 \item{mod}{model of class MCMCglmm}
 }
 \description{
-Performing Wald tests on MCMCglmm fixed effects automatically
+Performs a joint Wald test (see \code{\link{Wald.test}}) for every term of the fixed effect
+formula, e.g. all levels of a factor together.
 }
 \examples{
-# needs aod
-library(aod)
-mod <-  MCMCglmm(y ~ x, random = ~ z)
-# if x is a 4 levelled factor
-Wald.test(mod = mod)
+\donttest{
+library(MCMCglmm)
+d <- data.frame(x = factor(rep(letters[1:4], 50)), z = rnorm(200))
+d$y <- as.numeric(d$x) + rnorm(200)
+mod <- MCMCglmm(y ~ x + z, data = d, verbose = FALSE)
+Wald.test.auto(mod = mod)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{Wald}

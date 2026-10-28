@@ -5,8 +5,10 @@
 #' @import lattice
 #' @export
 #' @examples
+#' \dontrun{
 #' mod <- MCMCglmm(y ~ x1 + x2, random =  ~ z)
 #' traces(mod)[[1]]; traces(mod)[[2]]
+#' }
 
 traces <- function(mod){
   

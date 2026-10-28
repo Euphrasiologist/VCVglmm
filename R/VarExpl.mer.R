@@ -1,27 +1,35 @@
 #' Calculate variance explained from a lme4 model
 #'
+#' Proportion of variance explained by each variance component (and the residual, for lmer
+#' models). For glmer models an observation-level random effect called Obs must be fitted, which
+#' then plays the role of the residual. For random slopes, the variance at covariate = 0 is used;
+#' see \code{\link{glmm_varpart}} for a version that averages over covariate values and works on
+#' the link and data scales too.
+#'
 #' @param mod model of class (g)lmerMod
 #' @keywords lme4, variance explained, repeatability
 #' @export
 #' @examples
-#' mod <- lmer(y ~ x + (1 | z))
+#' library(lme4)
+#' mod <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 #' VarExpl.mer(mod)
 
 VarExpl.mer <- function(mod){
-    
-    if(class(mod)[1] == "glmerMod" | class(mod)[1] == "lmerMod"){
-      
-      if(class(mod)[1] == "glmerMod" & grepl(names(unlist(mod@cnms)), pattern = "Obs")[1] == FALSE){
+
+    if(inherits(mod, "glmerMod") || inherits(mod, "lmerMod")){
+
+      if(inherits(mod, "glmerMod") && !any(grepl(names(mod@cnms), pattern = "^Obs$"))){
         stop("Please fit an observation level random effect, called Obs, as last random effect in model formula")
       }
-        
-      ranvar <- data.frame(unlist(summary(mod)$varcor))
-      colnames(ranvar) <- "Var"
-      test <- vector()
-      for(i in 1:dim(ranvar)[1])
-        test[i] <- c(ranvar[i,]/sum(ranvar$Var))
-      
-      ranvar$"% Var Explained" <- test*100
+
+      vc <- as.data.frame(lme4::VarCorr(mod))
+      # variances only (covariances have a second variable); includes the residual for lmer
+      vc <- vc[is.na(vc$var2), ]
+      ranvar <- data.frame(Var = vc$vcov,
+                           row.names = ifelse(vc$grp == "Residual" | vc$var1 == "(Intercept)",
+                                              vc$grp, paste(vc$grp, vc$var1, sep = ".")))
+
+      ranvar$"% Var Explained" <- ranvar$Var / sum(ranvar$Var) * 100
     } else stop("Object not (g)lmerMod, from package:lme4")
   print(ranvar)
 }

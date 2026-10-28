@@ -13,8 +13,10 @@ traces(mod)
 Lattice output of the MCMC chains from the fixed and random effects from a MCMCglmm model
 }
 \examples{
+\dontrun{
 mod <- MCMCglmm(y ~ x1 + x2, random =  ~ z)
 traces(mod)[[1]]; traces(mod)[[2]]
+}
 }
 \keyword{MCMCglmm,}
 \keyword{effects,}

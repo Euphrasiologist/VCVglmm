@@ -17,18 +17,20 @@
 #' @examples
 #' # needs data.table
 #' library(data.table)
-#' mod <- lmer(y ~ x + (1 | z))
+#' library(lme4)
+#' mod <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 #' calc_pvals(mod)
 
 calc_pvals <- function(lmermod){
-  if(attributes(lmermod)$class == "lmerMod"){
+  if(inherits(lmermod, "lmerMod")){
     dat<-summary(lmermod)$coefficients
     
     dat <- data.table::as.data.table(as.data.frame(dat), keep.rownames = T)
     colnames(dat)[1] <- "Levels"
     
-    dat$pval_upperdf <- 1-pt(q = abs(dat$`t value`), df = stats::nobs(lmermod))
-    dat$pval_lowerdf <- 1-pt(q = abs(dat$`t value`), df = sum(summary(lmermod)$ngrps))
+    # two-sided p-values, bracketing the unknown denominator degrees of freedom
+    dat$pval_upperdf <- 2 * stats::pt(q = abs(dat$`t value`), df = stats::nobs(lmermod), lower.tail = FALSE)
+    dat$pval_lowerdf <- 2 * stats::pt(q = abs(dat$`t value`), df = sum(summary(lmermod)$ngrps), lower.tail = FALSE)
     
     return(dat)
   } else stop("Model not of class lmerMod")

@@ -17,7 +17,7 @@
 
 Bbar <- function(phylo, type = c("All", "Genus", "Species")){
   
-  if(class(phylo) != "phylo" || is.ultrametric(phylo)){
+  if(!inherits(phylo, "phylo") || is.ultrametric(phylo)){
     stop("Object must be of class phylo and not ultrametric")
   }
   if(!all(grepl("^.* .*", phylo$tip.label))){
@@ -36,14 +36,16 @@ Bbar <- function(phylo, type = c("All", "Genus", "Species")){
   }
   
   submats <- list()
-  for(name in gsub(pattern = " .*", replacement = "", colnames(varcov))){
-    submats[[name]] <- varcov[grepl(pattern = name, x = rownames(varcov)),grepl(pattern = name, x = colnames(varcov))]
+  genus <- gsub(pattern = " .*", replacement = "", colnames(varcov))
+  for(name in unique(genus)){
+    submats[[name]] <- varcov[genus == name, genus == name, drop = FALSE]
   }
   
   B <- matrix(sapply(X = submats, FUN = function(x) mean(diag(x))), dimnames = list(names(submats), "dbar"))
   B <- cbind(B, matrix(sapply(X = submats, FUN = function(x){
-    n <- dim(x)[1]  
-    sum(x)-sum(diag(x))/(n^2-n)
+    n <- dim(x)[1]
+    if(n < 2) return(0)
+    (sum(x)-sum(diag(x)))/(n^2-n)
   }), dimnames = list(names(submats), "obar")))
   
   if(type == "Genus"){

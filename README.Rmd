@@ -118,6 +118,59 @@ Again we see that ~95%+ of the variability in our data is explained by Parasite,
 MCMCRepnorm2(mod = mod.2)
 ```
 
+## Diagnosing and explaining models
+
+### A plain-English summary
+
+`glmm_explain()` works on `MCMCglmm`, `lmer` and `glmer` models. It reports:
+
+- convergence and fit checks;
+- each fixed effect on the latent (link) scale and on the data scale. Rate ratios and changes in expected counts for Poisson models, odds ratios and changes in probability for binary models, all averaged over the random effects;
+- the variance explained by each random term on the latent, link and data scales;
+- marginal and conditional R².
+
+```{r, eval = FALSE}
+glmm_explain(mod.2)
+```
+
+### Variance partitioning and R²
+
+`glmm_varpart()` generalises `MCMCRepnorm2()` and `MCMCReppois()` to Gaussian, Poisson, binary (logit/probit), ordinal and threshold models. It also handles random slopes and `idh()`/`us()` structures, with each term's variance averaged over the observations. Proportions are given on three scales:
+
+- latent;
+- link, which adds the distribution-specific variance;
+- data, the observed scale, computed exactly or by Gauss-Hermite quadrature.
+
+`glmm_R2()` gives Nakagawa & Schielzeth's marginal and conditional R².
+
+These work on multi-response models (`cbind(y1, y2) ~ trait - 1 + ...`), giving results per trait with that trait's family. Ordinal and threshold models with more than two categories are also supported: their data scale uses the cutpoints and refers to the category number. Categorical responses with more than two categories get the latent scale per log-odds contrast, and the data scale per category: the variance in each category indicator explained by each term, computed jointly over the contrasts by simulation. `glmm_explain()` also reports how each covariate changes every category's probability. `glmm_cor()` extracts every correlation in the covariance structures, for example among-group vs residual correlations between traits, or intercept-slope correlations.
+
+```{r, eval = FALSE}
+vp <- glmm_varpart(mod.2, fixed = TRUE)
+vp
+plot(vp)
+glmm_R2(mod.2)
+glmm_cor(mv.mod)   # correlations, e.g. for a multi-response model
+```
+
+### MCMC diagnostics
+
+```{r, eval = FALSE}
+MCMCdiag(mod.2)                 # ESS, autocorrelation, Geweke, Heidelberger-Welch, boundary variances, correlated fixed effects...
+MCMCtrace(mod.2)                # ggplot2 traces with running means; pass a list of models to overlay chains
+MCMCacfplot(mod.2)              # autocorrelation by lag
+MCMCcorplot(mod.2)              # posterior correlations between fixed effects
+MCMCpriorplot(mod.2, prior)     # is the posterior any different from the prior?
+MCMCgelman(chain1, chain2, chain3)  # Gelman-Rubin R-hat across chains
+```
+
+### lme4 diagnostics
+
+```{r, eval = FALSE}
+merdiag(mod.1)      # convergence, singular fits, few levels, overdispersion, collinearity, separation
+merdiagplot(mod.1)  # residuals vs fitted, QQ plots of residuals and random effects, scale-location
+```
+
 ## Improvements
 
 Please tell me where I've gone wrong and contribute if you can/want to!

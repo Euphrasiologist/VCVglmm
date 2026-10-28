@@ -9,12 +9,14 @@
 #' @import lme4
 #' @export
 #' @examples
+#' \dontrun{
 #' mod <- lmer(y ~ x + (1 | z))
 #' g_lmerfixplot(mod, list(pairwise ~ x), reorder = TRUE)
+#' }
 
 g_lmerfixplot <- function(model, factor, reorder = FALSE){
   
-  if(class(model)[1] != "glmerMod" | class(model)[1] != "lmerMod"){
+  if(!inherits(model, "merMod")){
     stop("Functionality supported for lme4 models only")
   }
   

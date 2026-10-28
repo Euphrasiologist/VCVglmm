@@ -10,15 +10,19 @@ MCMCranef(mod, group = FALSE, data = FALSE)
 \item{mod}{model of class MCMCglmm}
 
 \item{group}{logical, should the random effects be grouped?}
+
+\item{data}{logical, return the data instead of plotting?}
 }
 \description{
 Visualise the random effect posterior distributions
 }
 \examples{
+\dontrun{
 # requires data.table, ggplot2
 library(data.table); library(ggplot2)
 model <- MCMCglmm(y ~ x, random = ~ z)
 MCMCranef(model)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{modes}

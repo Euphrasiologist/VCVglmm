@@ -1,11 +1,17 @@
 #' Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale for Gaussian models
-#' 
+#'
+#' Each variance in the VCV is divided by the sum of all variances (covariances are excluded).
+#' See \code{\link{glmm_varpart}} for a more general version (other families, random slopes,
+#' latent/link/data scales).
+#'
 #' @param mod model of class MCMCglmm
 #' @keywords MCMCglmm, repeatability, ICC, variance explained
 #' @export
 #' @examples
+#' \dontrun{
 #' model <- MCMCglmm(y ~ x, random = ~ z)
-#' MCMCRepnorm2(model, "z")
+#' MCMCRepnorm2(model)
+#' }
 
 MCMCRepnorm2 <- function(mod){
   
@@ -13,15 +19,13 @@ MCMCRepnorm2 <- function(mod){
     stop("Model must be of class MCMCglmm!")
   }
   
-  y <- c(all.vars(mod$Random$formula), "units")
-  
+  y <- colnames(mod$VCV)[.MCMC_variance_cols(mod)]
+
   var.a <- list()
-  var.e <- rowSums(mod$VCV)
-  
   for(i in 1:length(y)){
     var.a[[paste0(y[i])]] <- mod$VCV[,y[i] ]}
-  
-  var.e <- rowSums(mod$VCV)
+
+  var.e <- rowSums(mod$VCV[, y, drop = FALSE])
   
   postR.link <- lapply(var.a, function(x) x/var.e)
   

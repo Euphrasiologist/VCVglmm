@@ -2,15 +2,18 @@
 #'
 #' @param model model of class MCMCglmm
 #' @param FUN function name to apply over object, default is posterior mode, suggested also is coda::HPDinterval
+#' @param ... unused
 #' @keywords MCMCglmm, posterior modes
 #' @import coda
 #' @import data.table
 #' @export
 #' @examples
+#' \dontrun{
 #' # requires data.table
 #' library(data.table)
 #' model <- MCMCglmm(y ~ x, random = ~ z)
 #' Solapply(model, coda::HPDinterval)
+#' }
 
 Solapply <- function(model, FUN = posterior_mode, ...){
   

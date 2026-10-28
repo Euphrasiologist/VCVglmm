@@ -4,16 +4,26 @@ Date: 2019-12-4
 Version: 0.1.0
 Authors@R: person("Max", "Brown", email = "max.brown@ed.ac.uk", role = c("aut", "cre"))
 Description: Manipulating model outputs, especially mixed models but also some generic plotting functions and data manipulation.
+    Includes convergence diagnostics, variance partitioning and R-squared on the latent, link and data scales,
+    and plain-English summaries of MCMCglmm and lme4 models.
 Depends: R(>= 3.5.1)
 License: What license is it under?
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 6.1.1
 Imports:
   data.table,
   ggplot2,
-  plyr,
-  dplyr,
   ape,
   coda,
-  lattice
+  lattice,
+  MCMCglmm,
+  lme4,
+  emmeans,
+  phytools,
+  Matrix,
+  stats,
+  methods,
+  graphics,
+  utils
+Suggests:
+  testthat
+Config/roxygen2/version: 8.0.0

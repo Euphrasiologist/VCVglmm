@@ -21,7 +21,8 @@ root-to-tip branch length is one and there is no need.
 \examples{
 # requires ape
 library(ape)
-tree <- rtree(100, rooted = TRUE)
+tree <- rtree(10, rooted = TRUE, tip.label = c(paste("G1", 1:5, sep = " "),
+                                                     paste("G2", 1:5, sep = " ")))
 Bbar(tree, type = "Genus")
 }
 \keyword{covariance,}

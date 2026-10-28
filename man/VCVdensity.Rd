@@ -13,10 +13,12 @@ VCVdensity(mod)
 Visualise the VCV of a MCMCglmm model
 }
 \examples{
+\dontrun{
 # requires ggplot2
 library(ggplot2)
 model <- MCMCglmm(y ~ x, random = ~ z)
 VCVdensity(model)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{modes}

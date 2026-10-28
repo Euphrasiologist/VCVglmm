@@ -12,11 +12,14 @@ MCMCReppois(mod, y = "variable")
 \item{y}{character vector of length 1, identical to name of random effect.}
 }
 \description{
-Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the link scale
+Uses the Poisson distribution-specific variance \eqn{\log(1/\exp(\beta_0) + 1)}. See
+\code{\link{glmm_varpart}} for the latent, link and data scales.
 }
 \examples{
+\dontrun{
 model <- MCMCglmm(y ~ x, random = ~ z)
 MCMCReppois(model, "z")
+}
 }
 \keyword{ICC,}
 \keyword{MCMCglmm,}

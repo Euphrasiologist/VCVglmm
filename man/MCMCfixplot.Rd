@@ -13,10 +13,12 @@ MCMCfixplot(mod)
 ggplot2 output of the fixed effects from a MCMCglmm model
 }
 \examples{
+\dontrun{
 # requires ggplot2
 library(ggplot2)
 mod <- MCMCglmm(y ~ x1 + x2, random =  ~ z)
 MCMCfixplot(mod)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{effects,}

@@ -17,8 +17,10 @@ g_lmerfixplot(model, factor, reorder = FALSE)
 ggplot2 ouptut of Tukey comparisons for lmer models
 }
 \examples{
+\dontrun{
 mod <- lmer(y ~ x + (1 | z))
 g_lmerfixplot(mod, list(pairwise ~ x), reorder = TRUE)
+}
 }
 \keyword{effects,}
 \keyword{fixed}

@@ -10,11 +10,15 @@ MCMCRepnorm2(mod)
 \item{mod}{model of class MCMCglmm}
 }
 \description{
-Calculate variance explained by a random variable (repeatability or Intra-Class Coefficient) on the data scale for Gaussian models
+Each variance in the VCV is divided by the sum of all variances (covariances are excluded).
+See \code{\link{glmm_varpart}} for a more general version (other families, random slopes,
+latent/link/data scales).
 }
 \examples{
+\dontrun{
 model <- MCMCglmm(y ~ x, random = ~ z)
-MCMCRepnorm2(model, "z")
+MCMCRepnorm2(model)
+}
 }
 \keyword{ICC,}
 \keyword{MCMCglmm,}

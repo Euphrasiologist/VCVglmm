@@ -11,15 +11,23 @@ Wald.test(mod, fixed)
 
 \item{fixed}{numeric vector specifying terms to be tested. In summary(mod), in location effects, the intercept is 1. Jointly test a factor by including all levels (minus intercept).}
 }
+\value{
+named vector with the chi-squared statistic, degrees of freedom and p-value
+}
 \description{
-Performing Wald tests on MCMCglmm fixed effects
+Jointly tests whether a set of fixed effects are all zero, using the posterior means and
+posterior covariance matrix of the effects: \eqn{\chi^2 = b' \Sigma^{-1} b} on
+\code{length(fixed)} degrees of freedom.
 }
 \examples{
-# needs aod
-library(aod)
-mod <-  MCMCglmm(y ~ x, random = ~ z)
-# if x is a 4 levelled factor
+\donttest{
+library(MCMCglmm)
+d <- data.frame(x = factor(rep(letters[1:4], 50)))
+d$y <- as.numeric(d$x) + rnorm(200)
+mod <- MCMCglmm(y ~ x, data = d, verbose = FALSE)
+# x is a 4 levelled factor
 Wald.test(mod = mod, fixed = 2:4)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{Wald}

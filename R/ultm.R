@@ -9,8 +9,10 @@
 #' @importFrom MCMCglmm inverseA
 #' @export
 #' @examples
+#' \dontrun{
 #' tree <- ape::read.tree("./tree.newick") # newick format
 #' ultm(tree, MPL = FALSE, inverseA = TRUE)
+#' }
 
 ultm<-function(tree, MPL = FALSE, inverseA = TRUE){
   

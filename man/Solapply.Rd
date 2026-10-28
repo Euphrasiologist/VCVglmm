@@ -10,15 +10,19 @@ Solapply(model, FUN = posterior_mode, ...)
 \item{model}{model of class MCMCglmm}
 
 \item{FUN}{function name to apply over object, default is posterior mode, suggested also is coda::HPDinterval}
+
+\item{...}{unused}
 }
 \description{
 Apply a function over each of the stored posterior solutions from a MCMCglmm Model
 }
 \examples{
+\dontrun{
 # requires data.table
 library(data.table)
 model <- MCMCglmm(y ~ x, random = ~ z)
 Solapply(model, coda::HPDinterval)
+}
 }
 \keyword{MCMCglmm,}
 \keyword{modes}

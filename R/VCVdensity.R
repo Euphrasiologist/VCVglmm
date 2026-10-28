@@ -6,10 +6,12 @@
 #' @import data.table
 #' @export
 #' @examples
+#' \dontrun{
 #' # requires ggplot2
 #' library(ggplot2)
 #' model <- MCMCglmm(y ~ x, random = ~ z)
 #' VCVdensity(model)
+#' }
 
 VCVdensity <- function(mod){
   

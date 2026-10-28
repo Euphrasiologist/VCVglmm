@@ -10,10 +10,15 @@ VarExpl.mer(mod)
 \item{mod}{model of class (g)lmerMod}
 }
 \description{
-Calculate variance explained from a lme4 model
+Proportion of variance explained by each variance component (and the residual, for lmer
+models). For glmer models an observation-level random effect called Obs must be fitted, which
+then plays the role of the residual. For random slopes, the variance at covariate = 0 is used;
+see \code{\link{glmm_varpart}} for a version that averages over covariate values and works on
+the link and data scales too.
 }
 \examples{
-mod <- lmer(y ~ x + (1 | z))
+library(lme4)
+mod <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 VarExpl.mer(mod)
 }
 \keyword{explained,}

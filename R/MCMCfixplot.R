@@ -5,10 +5,12 @@
 #' @import ggplot2
 #' @export
 #' @examples
+#' \dontrun{
 #' # requires ggplot2
 #' library(ggplot2)
 #' mod <- MCMCglmm(y ~ x1 + x2, random =  ~ z)
 #' MCMCfixplot(mod)
+#' }
 
 MCMCfixplot <- function(mod){
   
