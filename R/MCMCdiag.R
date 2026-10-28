@@ -101,36 +101,8 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
   if(S < 1000){
     issues <- c(issues, sprintf("Only %d samples stored; aim for >= 1000 (increase nitt or reduce thin).", S))
   }
-  low <- res$parameter[grepl("low ESS", res$flags)]
-  if(length(low)){
-    issues <- c(issues, sprintf("Effective sample size < %d for: %s. Run the chain longer (nitt) or improve mixing (parameter-expanded priors for variances).",
-                                min.ess, paste(low, collapse = ", ")))
-  }
-  ac <- res$parameter[grepl("autocorrelated", res$flags)]
-  if(length(ac)){
-    issues <- c(issues, sprintf("Lag-1 autocorrelation > %s for: %s. Increase thin (currently %d).",
-                                max.acf, paste(ac, collapse = ", "), mc[3]))
-  }
-  ns <- res$parameter[grepl("not stationary", res$flags)]
-  if(length(ns)){
-    issues <- c(issues, sprintf("Possible lack of convergence for: %s. Increase burnin (currently %d iterations discarded) and check traces with MCMCtrace(); compare chains with MCMCgelman().",
-                                paste(ns, collapse = ", "), mc[1] - 1))
-    gw <- grepl("(Geweke)", res$flags, fixed = TRUE)
-    hw <- grepl("(H-W)", res$flags, fixed = TRUE)
-    if(any(gw & !hw & !is.na(res$heidel))){
-      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Geweke fails but Heidelberger-Welch passes. H-W may discard up to half of the chain before testing, whereas Geweke compares the first 10%% with the second half, so this usually means the start of the chain is still drifting (or strong autocorrelation is inflating z). Look at the start of the trace; a longer burnin normally resolves it.",
-                                  paste(res$parameter[gw & !hw & !is.na(res$heidel)], collapse = ", ")))
-    }
-    if(any(hw & !gw & !is.na(res$geweke.z))){
-      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Heidelberger-Welch fails but Geweke passes. H-W looks at the whole chain, so this suggests a slow drift or a change late in the chain that the first 10%% vs second half comparison misses. Run the chain longer and compare chains with MCMCgelman().",
-                                  paste(res$parameter[hw & !gw & !is.na(res$geweke.z)], collapse = ", ")))
-    }
-  }
-  bd <- res$parameter[res$boundary]
-  if(length(bd)){
-    issues <- c(issues, sprintf("Variance posterior piled up near zero for: %s. The data contain little information about these; check prior sensitivity with MCMCpriorplot() and consider parameter-expanded priors.",
-                                paste(bd, collapse = ", ")))
-  }
+  piss <- .diag_param_issues(res, min.ess, max.acf, mc)
+  issues <- c(issues, piss)
 
   # fixed effect correlations
   if(nfl > 1){
@@ -177,9 +149,61 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
 
   class(res) <- c("MCMCdiag", "data.frame")
   attr(res, "issues") <- issues
+  # the issues that are not about single parameters, kept for printing row subsets
+  attr(res, "model.issues") <- setdiff(issues, piss)
+  attr(res, "thresholds") <- c(min.ess = min.ess, max.acf = max.acf)
+  attr(res, "n.par") <- nrow(res)
   attr(res, "n.samples") <- S
   attr(res, "mcpar") <- mc
   res
+}
+
+# issues about individual parameters, from the rows of an MCMCdiag table (so
+# that a row subset can report on just the rows it keeps)
+.diag_param_issues <- function(res, min.ess, max.acf, mc){
+  issues <- character(0)
+  low <- res$parameter[grepl("low ESS", res$flags)]
+  if(length(low)){
+    issues <- c(issues, sprintf("Effective sample size < %d for: %s. Run the chain longer (nitt) or improve mixing (parameter-expanded priors for variances).",
+                                min.ess, paste(low, collapse = ", ")))
+  }
+  ac <- res$parameter[grepl("autocorrelated", res$flags)]
+  if(length(ac)){
+    issues <- c(issues, sprintf("Lag-1 autocorrelation > %s for: %s. Increase thin (currently %d).",
+                                max.acf, paste(ac, collapse = ", "), mc[3]))
+  }
+  ns <- res$parameter[grepl("not stationary", res$flags)]
+  if(length(ns)){
+    issues <- c(issues, sprintf("Possible lack of convergence for: %s. Increase burnin (currently %d iterations discarded) and check traces with MCMCtrace(); compare chains with MCMCgelman().",
+                                paste(ns, collapse = ", "), mc[1] - 1))
+    gw <- grepl("(Geweke)", res$flags, fixed = TRUE)
+    hw <- grepl("(H-W)", res$flags, fixed = TRUE)
+    if(any(gw & !hw & !is.na(res$heidel))){
+      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Geweke fails but Heidelberger-Welch passes. H-W may discard up to half of the chain before testing, whereas Geweke compares the first 10%% with the second half, so this usually means the start of the chain is still drifting (or strong autocorrelation is inflating z). Look at the start of the trace; a longer burnin normally resolves it.",
+                                  paste(res$parameter[gw & !hw & !is.na(res$heidel)], collapse = ", ")))
+    }
+    if(any(hw & !gw & !is.na(res$geweke.z))){
+      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Heidelberger-Welch fails but Geweke passes. H-W looks at the whole chain, so this suggests a slow drift or a change late in the chain that the first 10%% vs second half comparison misses. Run the chain longer and compare chains with MCMCgelman().",
+                                  paste(res$parameter[hw & !gw & !is.na(res$geweke.z)], collapse = ", ")))
+    }
+  }
+  bd <- res$parameter[res$boundary]
+  if(length(bd)){
+    issues <- c(issues, sprintf("Variance posterior piled up near zero for: %s. The data contain little information about these; check prior sensitivity with MCMCpriorplot() and consider parameter-expanded priors.",
+                                paste(bd, collapse = ", ")))
+  }
+
+  issues
+}
+
+# keep the run details and issues when subsetting, so print() can report on the kept rows
+#' @export
+`[.MCMCdiag` <- function(x, ...){
+  out <- NextMethod()
+  if(is.data.frame(out)){
+    for(a in c("issues", "model.issues", "thresholds", "n.par", "n.samples", "mcpar")) attr(out, a) <- attr(x, a)
+  }
+  out
 }
 
 #' @export
@@ -201,7 +225,23 @@ print.MCMCdiag <- function(x, digits = 3, ...){
   print(y, row.names = FALSE)
   cat("\n")
   iss <- attr(x, "issues")
-  if(length(iss) == 0){
+  need <- c("parameter", "flags", "heidel", "geweke.z", "boundary")
+  # a row subset keeps the attributes: report only on the rows kept
+  sub <- !is.null(attr(x, "n.par")) && nrow(x) != attr(x, "n.par") && all(need %in% names(x))
+  if(sub){
+    th <- attr(x, "thresholds")
+    piss <- .diag_param_issues(as.data.frame(unclass(x)), th[["min.ess"]], th[["max.acf"]], mc)
+    miss <- attr(x, "model.issues")
+    if(length(piss) == 0) cat("No problems detected for the parameters shown.\n")
+    else {
+      cat("Potential problems (parameters shown):\n")
+      for(i in piss) cat(paste(strwrap(i, width = getOption("width") - 4, prefix = "    ", initial = "  - "), collapse = "\n"), "\n")
+    }
+    if(length(miss)){
+      cat("Model-level problems:\n")
+      for(i in miss) cat(paste(strwrap(i, width = getOption("width") - 4, prefix = "    ", initial = "  - "), collapse = "\n"), "\n")
+    }
+  } else if(length(iss) == 0){
     cat("No problems detected. (Diagnostics from a single chain can't prove convergence; compare several chains with MCMCgelman().)\n")
   } else {
     cat("Potential problems:\n")
