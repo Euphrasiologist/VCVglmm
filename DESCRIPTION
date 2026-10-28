@@ -7,7 +7,7 @@ Description: Manipulating model outputs, especially mixed models but also some g
     Includes convergence diagnostics, variance partitioning and R-squared on the latent, link and data scales,
     and plain-English summaries of MCMCglmm and lme4 models.
 Depends: R(>= 3.5.1)
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
   data.table,
