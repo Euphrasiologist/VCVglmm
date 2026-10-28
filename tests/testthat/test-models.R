@@ -97,3 +97,14 @@ test_that("Bbar genus-level off-diagonal mean is computed per genus", {
   }))
   expect_equal(Bbar(tree, "Genus"), by.hand)
 })
+
+test_that("MCMCdiag prints column subsets and explains disagreeing stationarity tests", {
+  m <- MCMCglmm(y ~ x, random = ~ g, data = d, verbose = FALSE, nitt = 3000, burnin = 1000, thin = 2)
+  expect_output(print(MCMCdiag(m)[, c("parameter", "ESS")]), "ESS")
+  # Geweke fails everywhere, H-W passes everywhere
+  local_mocked_bindings(geweke.diag = function(x, ...) list(z = c(var1 = -7.6)),
+                        heidel.diag = function(x, ...) matrix(1, 1, 1, dimnames = list(NULL, "stest")),
+                        .package = "coda")
+  iss <- attr(MCMCdiag(m), "issues")
+  expect_true(any(grepl("Geweke fails but Heidelberger-Welch passes", iss)))
+})

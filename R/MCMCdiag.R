@@ -12,6 +12,11 @@
 #'   \item{geweke.z}{Geweke's z-score comparing the first 10\% and last 50\% of the chain. Flagged when
 #'   |z| > 2.58 (not stationary, increase \code{burnin}).}
 #'   \item{heidel}{whether the Heidelberger-Welch stationarity test passed.}
+#' The two stationarity tests can disagree. Geweke's test compares the start of the chain with its
+#' second half, so a drift in the first 10\% (or strong autocorrelation) inflates z. The
+#' Heidelberger-Welch test discards up to half of the chain from the start until the rest looks
+#' stationary, so it passes when only the early part drifts. A Geweke failure with an H-W pass
+#' therefore usually means the burn-in is too short. When they disagree, the issue text says so.
 #'   \item{boundary}{variances only: the posterior is piled up against zero (lower HPD bound below
 #'   1\% of the posterior median). The estimate is then likely sensitive to the prior; see \code{MCMCpriorplot()}.}
 #' }
@@ -110,6 +115,16 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
   if(length(ns)){
     issues <- c(issues, sprintf("Possible lack of convergence for: %s. Increase burnin (currently %d iterations discarded) and check traces with MCMCtrace(); compare chains with MCMCgelman().",
                                 paste(ns, collapse = ", "), mc[1] - 1))
+    gw <- grepl("(Geweke)", res$flags, fixed = TRUE)
+    hw <- grepl("(H-W)", res$flags, fixed = TRUE)
+    if(any(gw & !hw & !is.na(res$heidel))){
+      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Geweke fails but Heidelberger-Welch passes. H-W may discard up to half of the chain before testing, whereas Geweke compares the first 10%% with the second half, so this usually means the start of the chain is still drifting (or strong autocorrelation is inflating z). Look at the start of the trace; a longer burnin normally resolves it.",
+                                  paste(res$parameter[gw & !hw & !is.na(res$heidel)], collapse = ", ")))
+    }
+    if(any(hw & !gw & !is.na(res$geweke.z))){
+      issues <- c(issues, sprintf("The stationarity tests disagree for %s: Heidelberger-Welch fails but Geweke passes. H-W looks at the whole chain, so this suggests a slow drift or a change late in the chain that the first 10%% vs second half comparison misses. Run the chain longer and compare chains with MCMCgelman().",
+                                  paste(res$parameter[hw & !gw & !is.na(res$geweke.z)], collapse = ", ")))
+    }
   }
   bd <- res$parameter[res$boundary]
   if(length(bd)){
@@ -170,11 +185,18 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
 #' @export
 print.MCMCdiag <- function(x, digits = 3, ...){
   mc <- attr(x, "mcpar")
+  # subsets (x[i, j]) lose the attributes: print the table only
+  if(is.null(mc)){
+    print(as.data.frame(unclass(x)), row.names = FALSE, digits = digits, ...)
+    return(invisible(x))
+  }
   cat(sprintf("MCMC diagnostics: %d samples (iterations %d-%d, thin %d)\n\n",
               attr(x, "n.samples"), mc[1], mc[2], mc[3]))
   y <- as.data.frame(unclass(x))
-  y <- y[, c("parameter", "type", "post.mean", "ESS", "acf1", "geweke.z", "heidel", "flags")]
-  num <- c("post.mean", "acf1", "geweke.z")
+  # a column subset (x[, cols]) keeps the class: print whatever columns are left
+  cols <- intersect(c("parameter", "type", "post.mean", "ESS", "acf1", "geweke.z", "heidel", "flags"), names(y))
+  if(length(cols)) y <- y[, cols, drop = FALSE]
+  num <- intersect(c("post.mean", "acf1", "geweke.z"), names(y))
   y[num] <- lapply(y[num], signif, digits = digits)
   print(y, row.names = FALSE)
   cat("\n")

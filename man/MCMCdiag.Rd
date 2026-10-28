@@ -34,6 +34,11 @@ For each parameter the following are reported:
   \item{geweke.z}{Geweke's z-score comparing the first 10\% and last 50\% of the chain. Flagged when
   |z| > 2.58 (not stationary, increase \code{burnin}).}
   \item{heidel}{whether the Heidelberger-Welch stationarity test passed.}
+The two stationarity tests can disagree. Geweke's test compares the start of the chain with its
+second half, so a drift in the first 10\% (or strong autocorrelation) inflates z. The
+Heidelberger-Welch test discards up to half of the chain from the start until the rest looks
+stationary, so it passes when only the early part drifts. A Geweke failure with an H-W pass
+therefore usually means the burn-in is too short. When they disagree, the issue text says so.
   \item{boundary}{variances only: the posterior is piled up against zero (lower HPD bound below
   1\% of the posterior median). The estimate is then likely sensitive to the prior; see \code{MCMCpriorplot()}.}
 }
