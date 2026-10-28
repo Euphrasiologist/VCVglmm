@@ -107,6 +107,8 @@ test_that("MCMCdiag prints column subsets and explains disagreeing stationarity 
   expect_match(out, "parameters shown")
   expect_match(out, "for: x\\.")
   expect_false(grepl("units", out))
+  expect_false(grepl("parameter-expanded", out)) # fixed effects only
+  expect_output(print(dg[dg$parameter == "g", ]), "parameter-expanded")
   expect_equal(capture.output(print(dg)), capture.output(print(dg[seq_len(nrow(dg)), ])))
   # Geweke fails everywhere, H-W passes everywhere
   local_mocked_bindings(geweke.diag = function(x, ...) list(z = c(var1 = -7.6)),

@@ -162,10 +162,13 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
 # that a row subset can report on just the rows it keeps)
 .diag_param_issues <- function(res, min.ess, max.acf, mc){
   issues <- character(0)
-  low <- res$parameter[grepl("low ESS", res$flags)]
-  if(length(low)){
-    issues <- c(issues, sprintf("Effective sample size < %d for: %s. Run the chain longer (nitt) or improve mixing (parameter-expanded priors for variances).",
-                                min.ess, paste(low, collapse = ", ")))
+  lw <- grepl("low ESS", res$flags)
+  if(any(lw)){
+    # parameter-expanded priors only help (co)variances
+    vc <- is.null(res$type) || any(res$type[lw] %in% c("variance", "covariance"))
+    issues <- c(issues, sprintf("Effective sample size < %d for: %s. Run the chain longer (nitt)%s.",
+                                min.ess, paste(res$parameter[lw], collapse = ", "),
+                                if(vc) " or improve mixing (parameter-expanded priors for variances)" else ""))
   }
   ac <- res$parameter[grepl("autocorrelated", res$flags)]
   if(length(ac)){
