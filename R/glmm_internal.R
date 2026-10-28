@@ -165,6 +165,17 @@
   else if(!is.null(rows)) fam <- fam[rows]
   fam <- unique(fam)
   if(length(fam) != 1) return("other")
+  # a binary family = "categorical" response is "multinomial" in mod$family too;
+  # only Residual$family ("multinomial2" vs "multinomialK") tells them apart
+  if(fam == "multinomial"){
+    rf <- as.character(mod$Residual$family)
+    tr <- .MCMC_traits(mod)
+    if(length(rf) == length(tr$names)){
+      hit <- if(is.null(rows)) seq_along(rf) else which(vapply(tr$rows, function(r) any(r %in% rows), logical(1)))
+      rf <- rf[hit]
+    }
+    if(all(rf == "multinomial2")) fam <- "multinomial2"
+  }
   switch(fam,
          gaussian = , cengaussian = "gaussian",
          poisson = , cenpoisson = "poisson",
@@ -458,9 +469,12 @@
 # Which scales are meaningful for a model. lme4 GLMMs have no residual term on the
 # latent scale, so latent-scale proportions are degenerate (they sum to 1 over
 # the random effects alone) and only the link and data scales are used.
+# For Gaussian and threshold models there is no distribution-specific variance,
+# so the link scale repeats the latent scale and is only kept if asked for alone.
 .usable_scales <- function(info, scale = c("latent", "link", "data")){
   if(info$family %in% c("other", "categorical")) return("latent")
   if(length(info$resid) == 0) scale <- setdiff(scale, "latent")
+  if(info$family %in% c("gaussian", "threshold") && "latent" %in% scale) scale <- setdiff(scale, "link")
   if(length(scale) == 0) scale <- "link"
   scale
 }

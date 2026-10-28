@@ -39,8 +39,10 @@ For each parameter the following are reported:
 }
 In addition, the model-level checks look at the number of stored samples, strong posterior
 correlations between fixed effects (poor identifiability or collinearity), whether a residual
-variance that cannot be estimated (binary data) was fixed, and extreme latent-scale intercepts that
-suggest (quasi-)complete separation.
+variance that cannot be estimated (binary data) was fixed, and extreme latent-scale coefficients that
+suggest (quasi-)complete separation. Coefficients are first divided by the latent standard deviation
+(all variance components plus the distribution-specific variance), because they grow with it: an
+intercept of -6 is unremarkable when the random effects have a variance of 20.
 }
 \examples{
 \donttest{

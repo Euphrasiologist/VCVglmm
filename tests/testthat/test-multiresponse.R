@@ -33,7 +33,7 @@ test_that("varpart, R2 and explain work per trait", {
   vp2 <- glmm_varpart(mv, trait = "y2", scale = "latent")
   expect_equal(unique(vp2$trait), "y2")
   r2 <- glmm_R2(mv)
-  expect_equal(nrow(r2), 2 * 3 * 2) # traits x scales x (R2m, R2c)
+  expect_equal(nrow(r2), (2 + 3) * 2) # traits x scales x (R2m, R2c); no link scale for Gaussian y1
   expect_s3_class(plot(vp), "ggplot")
   out <- capture.output(e <- glmm_explain(mv))
   expect_true(any(grepl("Trait: y1", out)))
@@ -65,7 +65,10 @@ test_that("ordinal and threshold fits reproduce the observed category frequencie
       VCVglmm:::.cat_probs(info$family, info$mu[s], V[s], info$cp[s, ])))
     expect_equal(unname(pr.cat), as.vector(table(d$yo)) / n, tolerance = 0.1)
     vp <- glmm_varpart(m)
-    expect_true(all(c("latent", "link", "data") %in% vp$scale))
+    expect_true(all(c("latent", "data") %in% vp$scale))
+    expect_equal("link" %in% vp$scale, fam == "ordinal") # threshold: link = latent
+    dsum <- rowSums(attr(vp, "draws")$data) # data-scale rows account for all of Var(y)
+    expect_equal(dsum, rep(1, length(dsum)), tolerance = 1e-6)
     expect_output(glmm_explain(m), "expected category")
   }
 })

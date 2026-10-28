@@ -11,10 +11,14 @@
 #'   term). \eqn{V_k / (V_F + \sum V)}. For a Gaussian model this is the usual ICC.}
 #'   \item{link}{As latent, but the distribution-specific variance is added to the
 #'   denominator (\eqn{\pi^2/3} for logit, 1 for probit, \eqn{\log(1 + 1/\lambda)} for
-#'   Poisson): the Nakagawa & Schielzeth (2010, 2013) definition.}
+#'   Poisson): the Nakagawa & Schielzeth (2010, 2013) definition. For Gaussian and threshold models it
+#'   equals the latent scale, so it is only returned when asked for without \code{"latent"}.}
 #'   \item{data}{The observed (data/response) scale: \eqn{Var(E[y | a_k]) / Var(y)}, computed
 #'   exactly (Poisson) or by Gauss-Hermite quadrature (binary families), following
-#'   de Villemereuil et al. (2016). Because of the non-linear link these proportions need not sum to one.}
+#'   de Villemereuil et al. (2016). For non-Gaussian families two rows account for the rest of the
+#'   variance so that the column sums to one: \code{Non-additive}, the part of the variance of the
+#'   expected response that can't be attributed to a single component because of the non-linear link,
+#'   and \code{Distribution-specific}, the sampling (e.g. binomial or Poisson) variance around it.}
 #' }
 #'
 #' \strong{Ordinal and threshold models} with more than two categories use the cutpoints: on the
@@ -98,10 +102,11 @@ glmm_varpart <- function(mod, scale = c("latent", "link", "data"), fixed = FALSE
   dropped <- setdiff(scale, ok)
   # categorical contrasts: explained once per response by .cat_parts()
   if(length(dropped) && info$family != "categorical"){
-    message(if(!is.null(info$trait)) paste0("Trait ", info$trait, ": "),
-            "not computing the ", paste(dropped, collapse = "/"), " scale: ",
-            if(info$family == "other") "only the latent scale is available for this family"
-            else "there is no residual term on the latent scale of this model, so it is degenerate")
+    why <- if(info$family == "other") "only the latent scale is available for this family"
+      else "there is no residual term on the latent scale of this model, so it is degenerate"
+    # the link scale of Gaussian/threshold models is dropped silently (documented)
+    if(!identical(dropped, "link") || info$family == "other" || length(info$resid) == 0) message(if(!is.null(info$trait)) paste0("Trait ", info$trait, ": "),
+            "not computing the ", paste(dropped, collapse = "/"), " scale: ", why)
   }
   ok
 }
@@ -139,6 +144,14 @@ glmm_varpart <- function(mod, scale = c("latent", "link", "data"), fixed = FALSE
     m <- matrix(m, ncol = ncol(comps), dimnames = list(NULL, colnames(comps)))
     if(fixed){
       m <- cbind(`Fixed effects` = .over_draws(.vcomp, fam, info$mu, Vf, V, info$cp) / vy, m)
+    }
+    if(fam != "gaussian"){
+      # the rest of Var(y): Var(E[y | l]) is more than the sum of the parts because
+      # of the non-linear link, and E[Var(y | l)] is the sampling variance
+      # (threshold models: y is fixed given l, so Var(E[y | l]) = Var(y))
+      vl <- if(fam == "threshold") vy else .over_draws(.vcomp, fam, info$mu, V, V, info$cp)
+      m <- cbind(m, `Non-additive` = vl / vy - rowSums(m))
+      if(fam != "threshold") m <- cbind(m, `Distribution-specific` = 1 - vl / vy)
     }
     out$data <- m
   }

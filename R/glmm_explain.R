@@ -369,6 +369,19 @@ glmm_explain <- function(mod, prob = 0.95, digits = 3, n.trials = NULL, nsim = 1
         add(wrap("Estimated as (almost) exactly zero: singular fit. The data do not support this term as specified.", 4))
       }
     }
+    if("data" %in% scales && fam != "gaussian"){
+      dr <- function(cmp){
+        r <- vp[vp$component == cmp & vp$scale == "data", ]
+        if(nrow(r) == 0) return(NULL)
+        if(info$bayes) sprintf("%s %s", pc(r$mode), ci(r$lower, r$upper, pc)) else pc(r$mean)
+      }
+      para(paste0("The data-scale shares above don't sum to 100%. The rest is ",
+                  paste(c(sprintf("non-additive variance, %s (because of the non-linear link, the variance of the expected response is more than the sum of what each term explains on its own)", dr("Non-additive")),
+                          if(fam != "threshold") sprintf("distribution-specific variance, %s (the %s sampling variance of the observations around their expected value)",
+                                                         dr("Distribution-specific"),
+                                                         switch(fam, poisson = "Poisson", logit = "binomial", probit = if(ordinal) "ordinal" else "binomial", ""))),
+                        collapse = ", and "), "."), 2)
+    }
     if(info$bayes && fam %in% c("logit", "probit", "threshold") && length(info$resid)){
       para(sprintf("Note: with %s data the units variance is not identifiable and is usually fixed (e.g. at 1); proportions depend on that choice on the latent/link scales, much less so on the data scale.",
                    if(ordinal) "ordinal" else "binary"), 2)

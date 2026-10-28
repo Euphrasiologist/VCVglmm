@@ -17,8 +17,10 @@
 #' }
 #' In addition, the model-level checks look at the number of stored samples, strong posterior
 #' correlations between fixed effects (poor identifiability or collinearity), whether a residual
-#' variance that cannot be estimated (binary data) was fixed, and extreme latent-scale intercepts that
-#' suggest (quasi-)complete separation.
+#' variance that cannot be estimated (binary data) was fixed, and extreme latent-scale coefficients that
+#' suggest (quasi-)complete separation. Coefficients are first divided by the latent standard deviation
+#' (all variance components plus the distribution-specific variance), because they grow with it: an
+#' intercept of -6 is unremarkable when the random effects have a variance of 20.
 #'
 #' @param mod model of class MCMCglmm
 #' @param min.ess minimum acceptable effective sample size
@@ -137,10 +139,23 @@ MCMCdiag <- function(mod, min.ess = 400, max.acf = 0.1, max.cor = 0.9, pr = FALS
     issues <- c(issues, "Binary response with an estimated residual (units) variance: it is not identifiable. Fix it in the prior, e.g. R = list(V = 1, fix = 1).")
   }
   if(fam %in% c("logit", "probit", "threshold")){
-    b0 <- colMeans(as.matrix(mod$Sol[, seq_len(nfl), drop = FALSE]))
-    big <- names(b0)[abs(b0) > if(fam == "logit") 10 else 5]
+    # coefficients scale with the latent standard deviation sqrt(V + distribution variance),
+    # so standardise them first: a value of 5 is a probability of about 1e-7 or 1 - 1e-7
+    infos <- tryCatch(suppressWarnings(.glmm_infos(mod)), error = function(e) NULL)
+    if(is.null(infos)){
+      b0 <- colMeans(as.matrix(mod$Sol[, seq_len(nfl), drop = FALSE]))
+      big <- names(b0)[abs(b0) > if(fam == "logit") 10 else 5]
+    } else {
+      big <- unique(unlist(lapply(infos, function(info){
+        if(!info$family %in% c("logit", "probit", "threshold")) return(NULL)
+        sdl <- sqrt(rowSums(do.call(cbind, c(list(0), info$comps))) + .extra_var(info$family) +
+                      if(info$family == "logit") pi^2 / 3 else 0)
+        b0 <- colMeans(info$beta / sdl)
+        names(b0)[abs(b0) > 5]
+      })))
+    }
     if(length(big)){
-      issues <- c(issues, sprintf("Very large latent-scale coefficients (%s): possible (quasi-)complete separation; consider a stronger prior on the fixed effects (B).",
+      issues <- c(issues, sprintf("Very large standardised latent-scale coefficients (%s, more than 5 latent standard deviations): possible (quasi-)complete separation; consider a stronger prior on the fixed effects (B).",
                                   paste(big, collapse = ", ")))
     }
   }

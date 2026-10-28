@@ -56,3 +56,16 @@ test_that("categorical and Gaussian responses can be mixed", {
   expect_true("y2" %in% vp$trait)
   expect_true("yc: reference" %in% vp$trait)
 })
+
+test_that("binary family = 'categorical' models are treated as logit", {
+  set.seed(4)
+  d <- data.frame(g = factor(rep(1:30, each = 10)))
+  d$y <- rbinom(300, 1, plogis(rnorm(30)[d$g]))
+  m <- MCMCglmm(y ~ 1, random = ~ g, family = "categorical", data = d, verbose = FALSE,
+                prior = list(R = list(V = 1, fix = 1), G = list(G1 = list(V = 1, nu = 0.002))),
+                nitt = 3000, burnin = 1000)
+  expect_equal(VCVglmm:::.MCMC_family(m), "logit")
+  vp <- glmm_varpart(m)
+  expect_setequal(unique(vp$scale), c("latent", "link", "data"))
+  expect_true(all(c("Non-additive", "Distribution-specific") %in% vp$component[vp$scale == "data"]))
+})

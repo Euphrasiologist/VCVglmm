@@ -36,5 +36,7 @@ MCMCRepnorm2 <- function(mod){
   rownames(res) <- gsub(pattern = ".var1", replacement =  "", x = rownames(res))
   colnames(res) <- "% Var explained"
   print(res*100)
-  print(lapply(CI, function(x) x*100))
+  CI <- lapply(CI, function(x) x*100)
+  print(CI)
+  invisible(list(R = res*100, CI = CI))
 }
